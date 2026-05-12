@@ -16,6 +16,8 @@ Best for:
 """
 
 import os
+from dotenv import load_dotenv
+load_dotenv()
 from azure.ai.inference import ChatCompletionsClient
 from azure.ai.inference.models import SystemMessage, UserMessage
 from azure.core.credentials import AzureKeyCredential
