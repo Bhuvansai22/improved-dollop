@@ -21,6 +21,9 @@ from azure.ai.inference import ChatCompletionsClient
 from azure.ai.inference.models import SystemMessage, UserMessage
 from azure.core.credentials import AzureKeyCredential
 
+from dotenv import load_dotenv
+load_dotenv()
+
 # ── Client Setup (shared pattern across all technique files) ──────────────────
 endpoint = "https://models.github.ai/inference"
 model    = "deepseek/DeepSeek-R1-0528"
