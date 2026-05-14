@@ -108,7 +108,7 @@ result = pipe("your input text")
 | `"text-classification"` | Classify text (e.g., sentiment) | `distilbert-base-uncased-finetuned-sst-2-english` |
 | `"fill-mask"` | Fill in a `[MASK]` token | `bert-base-uncased` |
 | `"ner"` | Named Entity Recognition | `dbmdz/bert-large-cased-finetuned-conll03-english` |
-| `"summarization"` | Summarise long text | `facebook/bart-large-cnn` |
+| `"text2text-generation"` | Summarise / translate (seq2seq) | `facebook/bart-large-cnn` |
 | `"translation"` | Translate between languages | `Helsinki-NLP/opus-mt-en-fr` |
 | `"question-answering"` | Extract answers from context | `deepset/roberta-base-squad2` |
 | `"zero-shot-classification"` | Classify without training | `facebook/bart-large-mnli` |

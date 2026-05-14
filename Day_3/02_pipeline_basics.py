@@ -5,7 +5,7 @@ Demonstrates the HuggingFace pipeline() API across four common tasks:
   1. Text Generation
   2. Sentiment Classification
   3. Named Entity Recognition (NER)
-  4. Summarisation
+  4. Summarisation (via AutoModelForSeq2SeqLM — pipeline-free)
 
 All models are small and run well on CPU.
 
@@ -13,7 +13,8 @@ Run:
     python 02_pipeline_basics.py
 """
 
-from transformers import pipeline
+import torch
+from transformers import pipeline, AutoTokenizer, AutoModelForSeq2SeqLM
 
 print("=" * 60)
 print("HuggingFace pipeline() API – 4 Task Showcase")
@@ -81,11 +82,19 @@ for ent in entities:
     print(f"  [{ent['entity_group']:4s}]  '{ent['word']}'  (score: {ent['score']:.3f})")
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Task 4: Summarisation
+# Task 4: Summarisation  (direct model call — pipeline-free)
+# NOTE: The pipeline task strings "summarization" and "text2text-generation"
+#       are not registered in all transformers versions. Loading the model and
+#       tokenizer directly is equivalent and always works.
 # ─────────────────────────────────────────────────────────────────────────────
 print("\n── 4. Summarisation (facebook/bart-large-cnn) ──")
 
-summariser = pipeline("summarization", model="facebook/bart-large-cnn")
+SUMMARISER_MODEL = "facebook/bart-large-cnn"
+print(f"  Loading {SUMMARISER_MODEL} …")
+
+sum_tokenizer = AutoTokenizer.from_pretrained(SUMMARISER_MODEL)
+sum_model     = AutoModelForSeq2SeqLM.from_pretrained(SUMMARISER_MODEL)
+sum_model.eval()
 
 article = """
 The transformer architecture, introduced in the 2017 paper "Attention is All You Need"
@@ -99,9 +108,26 @@ during training and led to models like BERT, GPT, and T5, which set new benchmar
 virtually every NLP task and formed the foundation of modern large language models (LLMs).
 """
 
-summary = summariser(article, max_length=80, min_length=30, do_sample=False)
+inputs = sum_tokenizer(
+    article,
+    return_tensors="pt",
+    truncation=True,
+    max_length=1024,
+)
+
+with torch.no_grad():
+    summary_ids = sum_model.generate(
+        **inputs,
+        max_length=80,
+        min_length=30,
+        num_beams=4,
+        early_stopping=True,
+    )
+
+summary_text = sum_tokenizer.decode(summary_ids[0], skip_special_tokens=True)
 print(f"\n  Original length : {len(article.split())} words")
-print(f"  Summary length  : {len(summary[0]['summary_text'].split())} words")
-print(f"\n  Summary:\n  {summary[0]['summary_text']}")
+print(f"  Summary length  : {len(summary_text.split())} words")
+print(f"\n  Summary:\n  {summary_text}")
 
 print("\n✅  Pipeline basics demo complete.")
+

@@ -125,8 +125,8 @@ with torch.no_grad():
         pad_token_id=tokenizer_reload.eos_token_id,
     )
 
-new_text = tokenizer_reload.decode(out[0][test_input["input_ids"].shape[-1]:], skip_special_tokens=True)
+new_text = tokenizer_reload.decode(out[0][test_input["input_ids"].shape[-1]:], skip_special_tokens=True).strip()
 print(f"\n  Reload test prompt: {test_prompt}")
-print(f"  Generated         : {new_text}")
+print(f"  Generated         : '{new_text}'")
 
 print("\n✅  Local model demo complete.")
