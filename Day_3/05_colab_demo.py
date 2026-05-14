@@ -14,7 +14,7 @@ HOW TO USE:
   3. Paste this script into a code cell and run
 
 NOTE: This script will NOT run well on CPU-only machines because
-      microsoft/phi-2 is a 2.7B parameter model (~5GB in float16).
+      TinyLlama is a 1.1B parameter model (~2.5GB in float16).
       GPT-2 is used as a fallback if no GPU is detected.
 """
 
@@ -35,7 +35,7 @@ if cuda_available:
     print(f"VRAM           : {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
     DTYPE  = torch.float16
     DEVICE = 0            # GPU index
-    MODEL  = "microsoft/phi-2"
+    MODEL  = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
 else:
     print("No GPU found — falling back to CPU with GPT-2")
     DTYPE  = torch.float32
@@ -72,7 +72,6 @@ pipe = pipeline(
     device=DEVICE,
     torch_dtype=DTYPE,
     model_kwargs={"cache_dir": CACHE_DIR} if CACHE_DIR else {},
-    trust_remote_code=True,   # Required for some newer models like Phi-2
 )
 
 # ─────────────────────────────────────────────────────────────────────────────
